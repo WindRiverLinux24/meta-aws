@@ -19,7 +19,7 @@ SRC_URI = "\
     file://ptest_result.py \
     "
 
-SRCREV = "b43cee18bf4b0fbc907db914296157e82e1d0d9f"
+SRCREV = "c7f2c5b30cb60ea72208aa4d3e513e2b02c3aa5a"
 
 S = "${WORKDIR}/git"
 
@@ -98,3 +98,6 @@ INSANE_SKIP:${PN}-src:append:class-target:arm = " buildpaths"
 INSANE_SKIP += "${@bb.utils.contains('PACKAGECONFIG', 'sanitize', 'buildpaths', '', d)}"
 PACKAGECONFIG[sanitize] = ",,gcc-sanitizers"
 OECMAKE_CXX_FLAGS += "${@bb.utils.contains('PACKAGECONFIG', 'sanitize', '-fsanitize=address,undefined -fno-omit-frame-pointer', '', d)}"
+
+# nooelint: oelint.vars.insaneskip:INSANE_SKIP
+INSANE_SKIP:${PN}-dev += "buildpaths"

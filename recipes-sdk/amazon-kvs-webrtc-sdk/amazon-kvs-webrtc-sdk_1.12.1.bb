@@ -25,7 +25,7 @@ SRC_URI = "\
     file://ptest_result.py \
 "
 
-SRCREV = "339f24ff4eb03d430d11d0ba6bf63e7946fbfbd8"
+SRCREV = "cf817bc5d18f3e4bd499c6b0f9a68c6f4d7e01de"
 
 S = "${WORKDIR}/git"
 
@@ -45,6 +45,7 @@ PACKAGECONFIG[static] = "-DBUILD_SHARED_LIBS=OFF,-DBUILD_SHARED_LIBS=ON,"
 do_configure[network] = "1"
 
 FILES:${PN} += "\
+    ${@bb.utils.contains('PACKAGECONFIG', 'with-samples', '/samples/*', '', d)} \
     ${libdir} \
     "
 
@@ -77,6 +78,15 @@ LDFLAGS += "-Wl,--copy-dt-needed-entries"
 
 # fix package neo-ai-tvm contains bad RPATH
 EXTRA_OECMAKE += "-DCMAKE_SKIP_RPATH=1"
+
+do_install:append () {
+    if [ -n "${@bb.utils.contains('PACKAGECONFIG', 'with-samples', '1', '', d)}" ]; then
+        install -d ${D}/samples/
+        cp -r ${S}/samples/h264SampleFrames ${D}/samples/
+        cp -r ${S}/samples/h265SampleFrames ${D}/samples/
+        cp -r ${S}/samples/opusSampleFrames ${D}/samples/
+    fi
+}
 
 do_install_ptest () {
     cp -r ${B}/tst/webrtc_client_test ${D}${PTEST_PATH}/
